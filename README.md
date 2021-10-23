@@ -1,45 +1,49 @@
-ViewModel and ViewModelFactory - Starter Code
-==================================
+View Model
 
-Use as starter code for the ViewModel codelab.
+First case is when we don’t need to send params to the view model
+In Fragment
 
-Introduction
-------------
+//Import the view model dependency
+implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
 
-This starter app is a two player game, GuessTheWord. It is a word guessing app you can play with one or more friends. To play, hold the device in landscape, facing away from you with your thumbs on the **Skip** and **Got It** buttons. Your friends can then give you clues to help you guess the word. If you get the word right, press **Got It**. If you're stuck, press **Skip**.
-You will modify the app to use Architecture components and best practices.
+private lateinit var viewModel: GameViewModel
 
-Pre-requisites
---------------
+(onCreateView)
+viewModel =     ViewModelProvider(this).get(GameViewModel::class.java)
 
-You need to know:
-- How to open, build, and run Android apps with Android Studio.
-- How to use the Navigation Architecture Component
-- Passing the data between navigation destinations.
-- Read the logs using the Logcat.
+//Create view Model class
+import androidx.lifecycle.ViewModel
+
+class GameViewModel: ViewModel() {
+   init {  ...   }
+
+    override fun onCleared() {
+       super.onCleared()
+   }
+}
 
 
-Getting Started
----------------
+Second case is when we need to send a param to the view model; so, we need to implement the Factory Method Pattern which allow us to instantiate the view model correctly.
 
-1. Download and run the app.
+//Create View MOdel with params
+class GameViewModel(val score: Int): ViewModel() { … }
 
-License
--------
+//Create View MOdel with params
+class ScoreViewModelFactory(private val finalScore: Int) : ViewModelProvider.Factory {
+   override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+       if (modelClass.isAssignableFrom(ScoreViewModel::class.java)) {
+           return ScoreViewModel(finalScore) as T
+       }
+       throw IllegalArgumentException("Unknown ViewModel class")
+   }
+}
+//Intantiate both in UI Controller (View)
+private lateinit var viewModel: ScoreViewModel
+private lateinit var viewModelFactory: ScoreViewModelFactory
 
-Copyright 2019 Google, Inc.
+viewModelFactory =
+  ScoreViewModelFactory(ScoreFragmentArgs.fromBundle(requireArguments()).score)
 
-Licensed to the Apache Software Foundation (ASF) under one or more contributor
-license agreements.  See the NOTICE file distributed with this work for
-additional information regarding copyright ownership.  The ASF licenses this
-file to you under the Apache License, Version 2.0 (the "License"); you may not
-use this file except in compliance with the License.  You may obtain a copy of
-the License at
+viewModel = ViewModelProvider(this, viewModelFactory)
+   .get(ScoreViewModel::class.java)
 
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
-License for the specific language governing permissions and limitations under
-the License.
