@@ -1,4 +1,5 @@
 View Model
+https://docs.google.com/document/d/1lL2tfPgtVDus5gZtDAG7yvD1bCGKkTYjxZsPul6MvcE/edit#
 
 First case is when we don’t need to send params to the view model
 In Fragment
